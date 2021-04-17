@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "A hospital management system project for CSE2004 DBMS",
   "main": "server.js",
+  "engines": {
+    "node": "10.22.1"
+  },
   "scripts": {
     "test": "nodemon server.js"
   },
