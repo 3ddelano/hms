@@ -3,19 +3,21 @@
 // Vellore Institute of Technology, Chennai
 
 const express = require('express');
-const app = express()
-const port = 3000
+
+const app = express();
+const port = process.env.PORT || 3000;
+
+let isDebug;
+if (process.env.PORT) isDebug = false;
+else isDebug = true;
 
 app.set('view engine', 'ejs');
 
-app.get('/', function (req, res) {
+app.get('/', (_req, res) => {
     res.render('pages/index');
 });
 
-
-app.listen(8080);
-console.log('8080 is the magic port');
-
 app.listen(port, () => {
-    console.log(`Project running on http://localhost:${port}`)
-})
+    if (isDebug) console.log(`Project running on http://localhost:${port}`);
+    else console.log('Project running on https://hms-product.herokuapp.com');
+});
