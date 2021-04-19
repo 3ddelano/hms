@@ -70,8 +70,8 @@
 					});
 					appointments = appointments.sort((a,b)=> a.date - b.date);
 					appointments.forEach(appointment => {
-						let date = appointment.date.toLocaleDateString('en-IN');
-						let time = appointment.date.toLocaleTimeString('en-IN', {hour: 'numeric', minute: 'numeric'});
+						let date = appointment.date.toLocaleDateString('en-IN', {timezone: 'Asia/Kolkata'});
+						let time = appointment.date.toLocaleTimeString('en-IN', {timeZone: 'Asia/Kolkata', hour: 'numeric', minute: 'numeric'});
 						let status = appointment.status;
 						let reason = appointment.reason;
 						let doctor = doctors.find(d=>d.id==appointment.doctor_id);
