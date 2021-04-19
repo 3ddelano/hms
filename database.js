@@ -147,7 +147,6 @@ exports.setPatientData = setPatientData = async (id, { full_name, address, dob, 
 exports.makeAppointment = makeAppointment = async ({ id, patient_id, doctor_id, date, status, reason }) => {
 	try {
 		date = date.replace(" +05.30", "+05:30");
-		console.log("\n\n", date, "\n\n");
 		let res = await client.query("INSERT INTO appointment (id, patient_id, doctor_id, status, reason, date) VALUES ($1, $2, $3, $4, $5, $6)", [
 			id, patient_id, doctor_id, status, reason, date
 		]);

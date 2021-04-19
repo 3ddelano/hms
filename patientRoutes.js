@@ -4,7 +4,7 @@ const { getPatientByID, signupPatient, setPatientData,
 
 module.exports = function (app, passport, renderTemplate) {
 	//get signup
-	app.get("/signup", checkNotAuthenticated, (_req, res) => {
+	app.get("/signup", checkNotAuthenticated, (req, res) => {
 		renderTemplate(req, res, "pages/signup", { message: null });
 	});
 
