@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<%- include('../partials/head'); %>
+</head>
+
+<body class="container">
+
+	<header>
+		<%- include('../partials/header'); %>
+			<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+			<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+			<script src="https://unpkg.com/libphonenumber-js/bundle/libphonenumber-js.min.js"></script>
+	</header>
+
+	<!-- Modal -->
+	<div class="modal fade" id="messageModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+		aria-labelledby="staticBackdropLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="messageModalTitle">Modal title</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<p id="messageModalText"></p>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Got it</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<main>
+		<div class="jumbotron mb-5">
+			<h1 class="">Personal Information</h1>
+			<p>Please enter your personal information.</p>
+			<form action="/personal" method="POST" id="personal-form" class="row g-3 needs-validation">
+				<div class="mb-3">
+					<label for="fullname" class="form-label">Full name</label>
+					<input required name="fullname" type="text" class="form-control" aria-describedby="emailHelp">
+				</div>
+				<div class="mb-3">
+					<label for="address" class="form-label">Address</label>
+					<input required name="address" type="text" class="form-control">
+				</div>
+				<div class="mb-3">
+					<label for="dob" class="form-label">Date of Birth</label>
+					<div class="input-group">
+						<span class="input-group-text"><span class="far fa-calendar-alt"></span></span>
+						<input name="dob" class="form-control" id="dobpicker" type="text" placeholder="dd/mm/yyyy"
+							required>
+					</div>
+				</div>
+				<div class="mb-3">
+					<label for="address" class="form-label">Gender</label>
+					<select name="gender" class="form-select" aria-label="Gender select" required>
+						<option selected disabled value="">Select Gender</option>
+						<option value="M">Male</option>
+						<option value="F">Female</option>
+						<option value="O">Other</option>
+					</select>
+				</div>
+				<div class="mb-3">
+					<label for="phone" class="form-label">Phone (with country code)</label>
+					<input id="phoneval" type="text" name="phone" class="form-control" placeholder="+919801234567">
+					<div class="invalid-feedback">
+						Please enter the phone number with country code eg. +91 9801234567
+					</div>
+				</div>
+				<button type="submit" class="btn btn-primary">Submit</button>
+			</form>
+
+		</div>
+	</main>
+
+	<%- include('../partials/footer'); %>
+		<script>
+
+			$(document).ready(() => {
+				// handle phone number validation
+				let personalForm = document.querySelector("#personal-form");
+				personalForm.addEventListener('submit', function (event) {
+					let flag = true;
+					if (!personalForm.checkValidity()) {
+						flag = false;
+					}
+
+					let phone = $("#phoneval");
+					phone.removeClass("is-valid");
+					phone.removeClass("was-valididated");
+					$("#personal-form").removeClass("was-validated");
+					try {
+						let isPhoneValid = new libphonenumber.parsePhoneNumber(phone.val()).isValid()
+						if (!isPhoneValid) {
+							phone.addClass("is-invalid");
+							flag = false;
+						} else {
+							phone.removeClass("is-invalid");
+							phone.addClass("is-valid");
+						}
+					} catch (err) {
+						phone.addClass("is-invalid");
+						flag = false;
+					}
+					if (flag) personalForm.classList.add('was-validated')
+					else {
+						event.preventDefault()
+						event.stopPropagation()
+					}
+				}, false);
+				// datepicker
+				$("#dobpicker").datepicker({
+					changeYear: true,
+					dateFormat: "dd-mm-yy",
+					yearRange: "c-150:"
+				});
+
+				// message modal
+				let message = JSON.parse(`<%- JSON.stringify(message) %>`);
+				if (message) {
+					let title = $("#messageModalTitle");
+					let text = $("#messageModalText");
+
+					title.removeClass('danger');
+					title.removeClass('success');
+					title.removeClass('warning');
+					title.addClass('text-' + message.type);
+					title.text(message.title)
+					text.text(message.text);
+					let messageModal = new bootstrap.Modal(document.getElementById('messageModal'));
+					messageModal.show();
+				}
+			});
+
+		</script>
+</body>
+
+</html>
