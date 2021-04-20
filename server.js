@@ -9,7 +9,6 @@ else require("dotenv").config({ path: __dirname + "/.env" });
 const express = require("express");
 const flash = require("express-flash");
 const session = require("express-session");
-const sslRedirect = require("heroku-ssl-redirect");
 
 const passport = require("passport");
 const { initializePassport } = require("./passport-config");
@@ -30,7 +29,16 @@ app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(flash());
-app.use(sslRedirect());
+
+if (process.env.NODE_ENV == 'production') {
+	app.use((req, res, next) => {
+		if (req.headers['x-forwarded-proto'] !== 'https') {
+			return res.redirect(['https://', req.get('Host'), req.url].join(''));
+		}
+		return next;
+	});
+}
+
 app.use(session({
 	secret: process.env.SESSION_SECRET,
 	resave: false,
