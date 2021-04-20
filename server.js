@@ -73,6 +73,10 @@ app.get("/404", (req, res) => {
 	renderTemplate(req, res, "pages/404");
 });
 
+app.get("/about", (req, res) => {
+	renderTemplate(req, res, "pages/about");
+});
+
 app.get("*", (req, res) => {
 	return res.redirect("/404");
 });

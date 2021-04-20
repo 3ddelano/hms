@@ -29,15 +29,24 @@
 		</div>
 	</div>
 	<main>
-		<div class="jumbotron py-5 my-5">
-			<h1>Welcome to City Hospital</h1>
+		<div class="col py-3 mb-5">
+			<div class="row flex-md-row-reverse">
+				<div class="col-12 col-md-6 d-flex justify-content-center justify-content-md-start">
+					<img class="img-fluid" style="max-width: 200px"
+						src="https://www.zilliondesigns.com/images/portfolio/healthcare-hospital/iStock-471629610-Converted.png"
+						alt="healthcare logo">
+				</div>
+				<div class="col-12 col-md-6 d-flex align-items-center">
+					<div>
+						<h1>Welcome to City Hospital</h1>
+						<h4>The modern hospital management web portal.</h4>
+					</div>
+				</div>
+			</div>
+
+
+			<br>
 			<h5 class="text lead">The following are the patient services available.</h5>
-			<!-- <div class="btn-group mt-3">
-                <a href="/signup" class="btn btn-primary m-2">Sign Up <i class="fa fa-user-plus"
-                        aria-hidden="true"></i></a>
-                <a href="/login" class="btn btn-outline-primary m-2">Login <i class="fa fa-sign-in"
-                        aria-hidden="true"></i></a>
-            </div> -->
 			<% if (locals.user && user.fullname) { %>
                 <h6 class="mt-5">Logged In As: <%= user.fullname%>
                 </h6>

@@ -3,14 +3,31 @@
 		href="https://github.com/3ddelano/hms/issues">[WIP] To report a bug / suggestion Click Here <i
 			class="fa fa-external-link-alt" aria-hidden="true"></i></a>
 </div>
-<nav class="navbar navbar-expand-lg navbar-light bg-light p-2">
-	<a class="navbar-brand" href="/"><i class="fa fa-hospital-o" aria-hidden="true"></i> [WIP]Hospital Management
+<nav class="navbar navbar-expand-md navbar-light bg-light p-2">
+	<a class="navbar-brand" href="/"><i class="fa fa-hospital-o" aria-hidden="true"></i> Hospital Management
 		System</a>
-	<ul class="navbar-nav mr-auto">
-		<li class="nav-item">
-			<a class="nav-link" href="/about">About</a>
-		</li>
-	</ul>
+	<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"
+		aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+		<span class="navbar-toggler-icon"></span>
+	</button>
+	<div class="collapse navbar-collapse" id="mainNav">
+		<ul class="navbar-nav w-100 d-flex justify-content-between">
+			<div>
+				<li class="nav-item">
+					<a class="nav-link" style="text-align: right;" href="/about">About</a>
+				</li>
+			</div>
+			<div class="d-md-flex">
+				<li class="nav-item justify-self-end">
+					<a class="nav-link text-end" href="/signup">Sign up</a>
+				</li>
+				<li class="nav-item justify-self-end">
+					<a class="nav-link text-end" href="/login">Login</a>
+				</li>
+			</div>
+		</ul>
+	</div>
+
 </nav>
 <nav class="my-3" style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
 	<ol class="breadcrumb">
