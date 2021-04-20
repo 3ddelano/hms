@@ -2,21 +2,23 @@
 // CSE2004 Project 2021
 // Vellore Institute of Technology, Chennai
 
-require("dotenv").config({ path: __dirname + "/.env" });
+let isDebug = true;
+if (process.env.PORT) isDebug = false;
+else require("dotenv").config({ path: __dirname + "/.env" });
+
 const express = require("express");
-const passport = require("passport");
 const flash = require("express-flash");
 const session = require("express-session");
+const sslRedirect = require("heroku-ssl-redirect");
 
+const passport = require("passport");
 const { initializePassport } = require("./passport-config");
 initializePassport(passport);
 
 const app = express();
 const port = process.env.PORT || 8082;
 
-let isDebug;
-if (process.env.PORT) isDebug = false;
-else isDebug = true;
+
 
 // database function
 const { init } = require("./database.js");
@@ -28,6 +30,7 @@ app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(flash());
+app.use(sslRedirect());
 app.use(session({
 	secret: process.env.SESSION_SECRET,
 	resave: false,
