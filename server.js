@@ -20,7 +20,7 @@ const port = process.env.PORT || 8082;
 
 
 // database function
-const { init } = require("./database.js");
+const { init, getHospitalByName } = require("./database.js");
 
 // other routes
 let patientRoutes = require("./patientRoutes");
@@ -53,11 +53,16 @@ Object.defineProperty(String.prototype, "toProperCase", {
 	}
 });
 
-const renderTemplate = (req, res, template, data = {}) => {
+
+
+const renderTemplate = async (req, res, template, data = {}) => {
+	let hospital = await getHospitalByName('City Hospital');
 	const baseData = {
 		path: req.path || null,
-		user: req.isAuthenticated() ? req.user : null
+		user: req.isAuthenticated() ? req.user : null,
+		hospital
 	};
+	console.log(hospital)
 	return res.render(template, Object.assign(baseData, data));
 };
 
@@ -67,6 +72,7 @@ app.get("/", (req, res) => {
 });
 
 patientRoutes(app, passport, renderTemplate);
+
 
 // handle 404
 app.get("/404", (req, res) => {

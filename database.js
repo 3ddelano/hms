@@ -11,6 +11,7 @@ pool.on("error", async (err) => {
 	console.log("Trying to reconnect to database...");
 	client = await pool.connect();
 });
+let hospital;
 
 exports.init = async () => {
 	try {
@@ -62,8 +63,8 @@ exports.init = async () => {
     );
 
     CREATE TABLE IF NOT EXISTS "hospital" (
-        "name" varchar NOT NULL,
-        "address" varchar,
+        "name" varchar PRIMARY KEY,
+        "address" varchar NOT NULL,
         "phone" varchar NOT NULL
     );
 
@@ -179,3 +180,22 @@ exports.getDoctorByID = getDoctorByID = async (id) => {
 		return null;
 	}
 }
+
+// hospital
+exports.getHospitalByName = getHospitalByName = async (name) => {
+	try {
+		let res = await client.query("SELECT * FROM hospital WHERE name = $1", [name]);
+		if (res.rows && res.rows[0]) return res.rows[0];
+		return [];
+	} catch (err) {
+		console.log('getHospitalByName Error: ', err);
+		return null;
+	}
+
+}
+
+// DOCTOR
+
+
+
+// ADMIN

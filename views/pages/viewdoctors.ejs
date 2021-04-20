@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<%- include('../partials/head'); %>
+</head>
+
+<body class="container">
+
+	<header>
+		<%- include('../partials/header'); %>
+	</header>
+
+	<main>
+		<div class="col py-3 mb-5">
+			<h1 class="">Doctors Available</h1>
+			<% if (locals.doctors && doctors.length> 0 ) { %>
+				<div class="table-responsive">
+				<table class="table table-bordered text-center">
+				<thead>
+					<tr class="table-dark">
+						<th scope="col">Name</th>
+						<th scope="col">Specialization</th>
+					</tr>
+				</thead>
+				<tbody>
+				<% 
+
+					doctors.forEach(doctor => {
+					%>
+						<tr>
+							<th scope="row"><%= doctor.full_name %></th>
+							<td><%= doctor.specialization %></td>
+						</tr>
+						
+					<%});
+				%>
+				</tbody>
+				</table></div>
+			<% } else { %>
+				<p> No doctors available.</p>
+			<% } %>
+		</div>
+	</main>
+
+	<%- include('../partials/footer'); %>
+</body>
+
+</html>

@@ -1,6 +1,6 @@
 const { ensureLoggedIn } = require('connect-ensure-login');
 const { getPatientByID, signupPatient, setPatientData,
-	makeAppointment, getAppointmentsByPatientID, getDoctorByID } = require("./database.js");
+	makeAppointment, getAppointmentsByPatientID, getDoctorByID, getAllDoctors } = require("./database.js");
 
 module.exports = function (app, passport, renderTemplate) {
 	//get signup
@@ -147,8 +147,15 @@ module.exports = function (app, passport, renderTemplate) {
 			if (!doctorIDs.includes(doctor_id)) doctorIDs.push(doctor_id);
 		});
 		let doctors = [];
+
 		doctorIDs.forEach(id => doctors.push(getDoctorByID(id)));
 		doctors = await Promise.all(doctors);
-		return renderTemplate(req, res, "pages/viewappointments", { user: req.user, appointments, doctors });
+		return renderTemplate(req, res, "pages/viewappointments", { appointments, doctors });
+	});
+
+	app.get("/viewdoctors", ensureLoggedIn("/login"), async (req, res) => {
+		let doctors = await getAllDoctors();
+
+		return renderTemplate(req, res, "pages/viewdoctors", { doctors });
 	});
 }

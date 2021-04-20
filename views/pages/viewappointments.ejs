@@ -90,13 +90,8 @@
 				%>
 				</tbody>
 				</table></div>
-			<% } else { %>
-				<p>You have not made any appointments.</p>
-				<a href="/makeappointment" class="btn btn-primary m-2 text-start"><i class="fa fa-plus"
-						aria-hidden="true"></i> Make Appointment</a>
 			<% } %>
-					<a href="/makeappointment" class="btn btn-primary m-2 text-start mt-3"><i class="fa fa-plus" aria-hidden="true"></i>
-						Make Appointment</a>
+			<a href="/makeappointment" class="btn btn-primary m-2 text-start mt-3"><i class="fa fa-plus" aria-hidden="true"></i> Make Appointment</a>
 		</div>
 	</main>
 
@@ -104,9 +99,6 @@
 	<script>
 
 		$(document).ready(() => {
-
-
-
 			<% if (locals.message) { %>
 				// message modal
 				let message = JSON.parse(`<%- JSON.stringify(message) %>`);
