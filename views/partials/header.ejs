@@ -16,14 +16,20 @@
 				<li class="nav-item">
 					<a class="nav-link" style="text-align: right;" href="/about">About</a>
 				</li>
-				<li class="nav-item">
-					<a class="nav-link" style="text-align: right;" href="/doctor">Doctor Dashboard</a>
-				</li>
+				<% if (locals.doctor) { %>
+					<li class="nav-item">
+						<a class="nav-link" style="text-align: right;" href="/">Patient Dashboard</a>
+					</li>
+				<% } else { %>
+					<li class="nav-item">
+						<a class="nav-link" style="text-align: right;" href="/doctor">Doctor Dashboard</a>
+					</li>
+				<% } %>
 			</div>
 			<div class="d-md-flex">
 				<% if (user) { %>
 					<li class="nav-item justify-self-end">
-						<a class="nav-link text-end" href="<%= (locals.doctor) ? '/doctor/logout' : '/logout'%>">Logout</a>
+						<a class="nav-link text-end" href="<%= (locals.doctor || user.role == 'doctor') ? '/doctor/logout' : '/logout'%>">Logout</a>
 					</li>
 				<% } else { %>
 					<% if (locals.hideSignup && hideSignup) {} else { %>

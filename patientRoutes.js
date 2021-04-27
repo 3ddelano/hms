@@ -1,4 +1,3 @@
-const { ensureLoggedIn } = require('connect-ensure-login');
 const { getPatientByID, signupPatient, setPatientData,
 	makeAppointment, getAppointmentsByPatientID, getDoctorByID, getAllDoctors, deleteAppointmentByPatient } = require("./database.js");
 
@@ -43,12 +42,20 @@ module.exports = function (app, passport, renderTemplate) {
 		};
 	});
 
+	function checkPatientAuthenticated(req, res, next) {
+		if (req.isAuthenticated() && req.user && req.user.role == "patient") {
+			return next();
+		}
+		req.session.returnTo = req.originalUrl;
+		return res.redirect("/login");
+	}
+
 	//get personal
-	app.get("/personal", ensureLoggedIn('/login'), checkPatientDataNotSet, (req, res) => {
+	app.get("/personal", checkPatientAuthenticated, checkPatientDataNotSet, (req, res) => {
 		renderTemplate(req, res, "pages/patient/personal");
 	});
 
-	app.post("/personal", ensureLoggedIn('/login'), checkPatientDataNotSet, async (req, res) => {
+	app.post("/personal", checkPatientAuthenticated, checkPatientDataNotSet, async (req, res) => {
 		let { fullname, address, dob, gender, phone } = req.body;
 		try {
 			await setPatientData(req.user.id, {
@@ -74,7 +81,7 @@ module.exports = function (app, passport, renderTemplate) {
 		failureFlash: true
 	}));
 
-	app.get("/logout", ensureLoggedIn('/login'), (req, res) => {
+	app.get("/logout", checkPatientAuthenticated, (req, res) => {
 		req.logOut();
 		req.flash("message", { type: "success", title: "Logout Successfull", text: "You have been logged out successfully." });
 		return res.redirect("/");
@@ -103,12 +110,12 @@ module.exports = function (app, passport, renderTemplate) {
 
 
 	// SERVICES
-	app.get("/makeappointment", ensureLoggedIn("/login"), checkPatientDataSet, async (req, res) => {
+	app.get("/makeappointment", checkPatientAuthenticated, checkPatientDataSet, async (req, res) => {
 		let doctors = await getAllDoctors();
 		return renderTemplate(req, res, "pages/patient/makeappointment", { user: req.user, doctors });
 	});
 
-	app.post("/makeappointment", ensureLoggedIn("/login"), checkPatientDataSet, async (req, res) => {
+	app.post("/makeappointment", checkPatientAuthenticated, checkPatientDataSet, async (req, res) => {
 		let { reason, doctor, datetime } = req.body;
 
 		function returnError(title, text) {
@@ -137,7 +144,7 @@ module.exports = function (app, passport, renderTemplate) {
 		return res.redirect('/makeappointment');
 	});
 
-	app.get("/viewappointments", ensureLoggedIn("/login"), checkPatientDataSet, async (req, res) => {
+	app.get("/viewappointments", checkPatientAuthenticated, checkPatientDataSet, async (req, res) => {
 		let appointments = await getAppointmentsByPatientID(req.user.id);
 
 		let doctorIDs = [];
@@ -151,7 +158,7 @@ module.exports = function (app, passport, renderTemplate) {
 		return renderTemplate(req, res, "pages/patient/viewappointments", { appointments, doctors });
 	});
 
-	app.post("/cancelappointment", ensureLoggedIn("/login"), async (req, res) => {
+	app.post("/cancelappointment", checkPatientAuthenticated, async (req, res) => {
 		let id = req.body.id;
 
 		function showError(title, text) {
@@ -178,7 +185,7 @@ module.exports = function (app, passport, renderTemplate) {
 		return res.redirect("/viewappointments");
 	});
 
-	app.get("/viewdoctors", ensureLoggedIn("/login"), async (req, res) => {
+	app.get("/viewdoctors", checkPatientAuthenticated, async (req, res) => {
 		let doctors = await getAllDoctors();
 		return renderTemplate(req, res, "pages/patient/viewdoctors", { doctors });
 	});
