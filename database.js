@@ -44,7 +44,7 @@ exports.init = async () => {
         "dob" date,
         "specialization" varchar,
         "year_of_passing" int,
-        "mbbs_reg" varchar
+        "mbbs_reg" varchar UNIQUE
     );
 
     CREATE TABLE IF NOT EXISTS "appointment" (
@@ -100,12 +100,19 @@ exports.addPatientData = async (patient) => {
 	}
 };
 
-exports.getPatientByID = getPatientByID = async (id) => {
+exports.getPatientByID = getPatientByID = async (id, alsoPassword) => {
 	if (!id) return null;
 	try {
-		let res = await client.query("SELECT * FROM patient WHERE id = $1",
+		let res;
+		res = await client.query("SELECT * FROM patient WHERE id = $1",
 			[id]);
-		if (res && res.rows && res.rows[0]) return res.rows[0];
+		if (res && res.rows && res.rows[0]) {
+			if (!alsoPassword) {
+				delete res.rows[0].password;
+			}
+			res.rows[0].role = "patient";
+			return res.rows[0];
+		}
 		else return null;
 	} catch (err) {
 		console.log(err, `\n\ngetPatientByID ERROR: ${err.detail}\n MESSAGE ${err.message}`);
@@ -126,10 +133,18 @@ exports.signupPatient = signupPatient = async (id, password) => {
 
 exports.getAllPatients = getAllPatients = async () => {
 	let res = await client.query("SELECT * from patient;");
+	if (res && res.rows) {
+		res.rows.map(row => {
+			if (row.password) delete row.password;
+		});
+	}
 	return res.rows || [];
 };
 exports.getAllDoctors = getAllDoctors = async () => {
-	let res = await client.query("SELECT * from doctor;");
+	let res = await client.query("SELECT * FROM doctor;");
+	res.rows.map(row => {
+		if (row.password) delete row.password;
+	});
 	return res.rows || [];
 };
 
@@ -159,6 +174,19 @@ exports.makeAppointment = makeAppointment = async ({ id, patient_id, doctor_id, 
 	}
 }
 
+exports.deleteAppointmentByPatient = deleteAppointmentByPatient = async (id, patientId) => {
+	try {
+		let res = await client.query("DELETE FROM appointment WHERE id = $1 AND patient_id = $2", [
+			id, patientId
+		]);
+		if (res.command && res.command == "DELETE") return true;
+		return false;
+	} catch (err) {
+		console.log("deleteAppointmentByPatient Error: ", err);
+		return null;
+	}
+}
+
 exports.getAppointmentsByPatientID = getAppointmentsByPatientID = async (patient_id) => {
 	try {
 		let res = await client.query("SELECT * FROM appointment WHERE patient_id = $1", [patient_id]);
@@ -170,16 +198,6 @@ exports.getAppointmentsByPatientID = getAppointmentsByPatientID = async (patient
 	}
 };
 
-exports.getDoctorByID = getDoctorByID = async (id) => {
-	try {
-		let res = await client.query("SELECT * FROM doctor WHERE id = $1", [id]);
-		if (res.rows && res.rows[0]) return res.rows[0];
-		return [];
-	} catch (err) {
-		console.log("getDoctorByID Error: ", err);
-		return null;
-	}
-}
 
 // hospital
 exports.getHospitalByName = getHospitalByName = async (name) => {
@@ -195,7 +213,47 @@ exports.getHospitalByName = getHospitalByName = async (name) => {
 }
 
 // DOCTOR
+exports.getDoctorByID = getDoctorByID = async (id, alsoPassword) => {
+	if (!id) return null;
+	try {
+		let res;
+		res = await client.query("SELECT * FROM doctor WHERE id = $1",
+			[id]);
+		if (res && res.rows && res.rows[0]) {
+			if (!alsoPassword) {
+				delete res.rows[0].password;
+			}
+			res.rows[0].role = "doctor";
+			return res.rows[0];
+		}
+		else return null;
+	} catch (err) {
+		console.log(err, `\n\ngetDoctorByID ERROR: ${err.detail}\n MESSAGE ${err.message}`);
+	}
+}
 
+exports.getAppointmentsByDoctorID = getAppointmentsByDoctorID = async (doctor_id) => {
+	try {
+		let res = await client.query("SELECT * FROM appointment WHERE doctor_id = $1", [doctor_id]);
+		if (res && res.rows) return res.rows;
+		return [];
+	} catch (err) {
+		console.log("getAppointmentsByDoctorID Error: ", err);
+		return [];
+	}
+}
 
+exports.completeAppointmentByDoctor = completeAppointmentByDoctor = async (id, doctor_id) => {
+	try {
+		let res = await client.query("UPDATE appointment SET status = 'COMPLETED' WHERE id = $1 AND doctor_id = $2", [
+			id, doctor_id
+		]);
+		if (res.command && res.command == "UPDATE") return true;
+		return false;
+	} catch (err) {
+		console.log("completeAppointmentByDoctor Error: ", err);
+		return null;
+	}
+}
 
 // ADMIN

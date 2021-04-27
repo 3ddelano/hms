@@ -2,13 +2,13 @@
 <html lang="en">
 
 <head>
-	<%- include('../partials/head'); %>
+	<%- include('../../partials/head'); %>
 </head>
 
 <body class="container">
 
 	<header>
-		<%- include('../partials/header'); %>
+		<%- include('../../partials/header'); %>
 	</header>
 
 	<main>
@@ -21,16 +21,17 @@
 					<tr class="table-dark">
 						<th scope="col">Name</th>
 						<th scope="col">Specialization</th>
+						<th scope="col">Gender</th>						
+						<th scope="col">MBBS Reg Num</th>
 					</tr>
 				</thead>
 				<tbody>
-				<% 
-
-					doctors.forEach(doctor => {
-					%>
+				<% doctors.forEach(doctor => { %>
 						<tr>
 							<th scope="row"><%= doctor.full_name %></th>
 							<td><%= doctor.specialization %></td>
+							<td><%= doctor.gender == "M" ? "Male" : "Female" %></td>
+							<td><%= doctor.mbbs_reg %></td>
 						</tr>
 						
 					<%});
@@ -43,7 +44,7 @@
 		</div>
 	</main>
 
-	<%- include('../partials/footer'); %>
+	<%- include('../../partials/footer'); %>
 </body>
 
 </html>

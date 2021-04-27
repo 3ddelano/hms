@@ -2,13 +2,13 @@
 <html lang="en">
 
 <head>
-	<%- include('../partials/head'); %>
+	<%- include('../../partials/head'); %>
 </head>
 
 <body class="container">
 
 	<header>
-		<%- include('../partials/header'); %>
+		<%- include('../../partials/header'); %>
 			<link rel="stylesheet"
 				href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.9/jquery.datetimepicker.css"
 				integrity="sha512-bYPO5jmStZ9WI2602V2zaivdAnbAhtfzmxnEGh9RwtlI00I9s8ulGe4oBa5XxiC6tCITJH/QG70jswBhbLkxPw=="
@@ -19,41 +19,26 @@
 				crossorigin="anonymous"></script>
 	</header>
 
-	<!-- Modal -->
-	<div class="modal fade" id="messageModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-		aria-labelledby="staticBackdropLabel" aria-hidden="true">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title" id="messageModalTitle">Modal title</h5>
-					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-				</div>
-				<div class="modal-body">
-					<p id="messageModalText"></p>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Got it</button>
-				</div>
-			</div>
-		</div>
-	</div>
-	<main>
-		<div class="col py-3 mb-5">
-			<h1 class="">Make Appointment</h1>
-			<p>Please fill the information.</p>
-			<form action="/makeappointment" method="POST" id="makeappointment-form" class="row g-3 needs-validation">
-				<div class="mb-3">
-					<label for="fullname" class="form-label">Full name</label>
-					<input class="form-control" type="text" placeholder="<%= user.full_name %>"
-						aria-label="Disabled input example" disabled readonly>
-				</div>
-				<div class="mb-3">
-					<label for="address" class="form-label">Reason</label>
-					<input required name="reason" type="text" class="form-control">
-				</div>
-				<div class="mb-3">
-					<label for="doctor" class="form-label">Choose a Doctor</label>
-					<% if (doctors.length==0 ) {%>
+	<%- include('../../partials/alert'); %>
+
+		<main>
+			<div class="col py-3 mb-5">
+				<h1 class="">Make Appointment</h1>
+				<p>Please fill the information.</p>
+				<form action="/makeappointment" method="POST" id="makeappointment-form"
+					class="row g-3 needs-validation">
+					<div class="mb-3">
+						<label for="fullname" class="form-label">Full name</label>
+						<input class="form-control" type="text" placeholder="<%= user.full_name %>"
+							aria-label="Disabled input example" disabled readonly>
+					</div>
+					<div class="mb-3">
+						<label for="address" class="form-label">Reason</label>
+						<input required name="reason" type="text" class="form-control">
+					</div>
+					<div class="mb-3">
+						<label for="doctor" class="form-label">Choose a Doctor</label>
+						<% if (doctors.length==0 ) {%>
 						<p class="text-danger small">No doctors available</p>
 						<% } else { let sorted=doctors.sort((a,b)=> a.specialization > b.specialization ? 1 : -1); %>
 							<table class="table table-responsive table-bordered text-center">
@@ -88,7 +73,7 @@
 						Time)</label>
 					<div class="input-group">
 						<span class="input-group-text"><span class="far fa-calendar-alt"></span></span>
-						<input name="datetime" class="form-control" id="datetimepicker" type="text"
+						<input autocomplete=off name="datetime" class="form-control" id="datetimepicker" type="text"
 							placeholder="yyyy-mm-dd hh:mm +05:30" required>
 					</div>
 				</div>
@@ -101,7 +86,7 @@
 		</div>
 	</main>
 
-	<%- include('../partials/footer'); %>
+	<%- include('../../partials/footer'); %>
 		<script>
 
 			$(document).ready(() => {
@@ -113,24 +98,6 @@
 					minDate: '0',
 					defaultTime: '14:00'
 				});
-
-				<% if (locals.message) { %>
-					// message modal
-					let message = JSON.parse(`<%- JSON.stringify(message) %>`);
-					if (message) {
-						let title = $("#messageModalTitle");
-						let text = $("#messageModalText");
-
-						title.removeClass('danger');
-						title.removeClass('success');
-						title.removeClass('warning');
-						title.addClass('text-' + message.type);
-						title.text(message.title)
-						text.text(message.text);
-						let messageModal = new bootstrap.Modal(document.getElementById('messageModal'));
-						messageModal.show();
-					}
-						<% } %>
 			});
 
 		</script>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<%- include('../../partials/head'); %>
+</head>
+
+<body class="container">
+
+	<header>
+		<%- include('../../partials/header'); %>
+	</header>
+	<%- include('../../partials/alert'); %>
+
+		<main>
+			<div class="col py-3 mb-5">
+				<h1 class="text-center">Login</h1>
+				<form action="/login" method="POST" id="login-form" class="row g-3 needs-validation">
+					<div class="mb-3">
+						<label for="loginemail" class="form-label">Email address</label>
+						<input required name="email" type="email" class="form-control" id="login-email"
+							aria-describedby="emailHelp" value="">
+					</div>
+					<div class="mb-3">
+						<label for="loginpassword" class="form-label">Password</label>
+						<input required name="password" type="password" class="form-control" id="login-password"
+							value="">
+					</div>
+					<button type="submit" class="btn btn-primary">Submit</button>
+				</form>
+				<div class="text-center mt-3">
+					<a class="" href="/signup">I don't have an account. Create Account <i
+							class="fas fa-arrow-circle-right"></i></a>
+				</div>
+			</div>
+		</main>
+
+		<%- include('../../partials/footer'); %>
+</body>
+
+</html>

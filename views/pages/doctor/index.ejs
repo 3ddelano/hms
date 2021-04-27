@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<%- include('../../partials/head'); %>
+</head>
+
+<body class="container">
+
+	<header>
+		<%- include('../../partials/header', {hideSignup: true, doctor: true}); %>
+	</header>
+	<%- include('../../partials/alert');%>
+
+		<main>
+			<div class="col py-3 mb-5">
+				<div class="row flex-md-row-reverse">
+					<div class="col-12 col-md-6 d-flex justify-content-center justify-content-md-start">
+						<img class="img-fluid" style="max-width: 200px"
+							src="https://www.zilliondesigns.com/images/portfolio/healthcare-hospital/iStock-471629610-Converted.png"
+							alt="healthcare logo">
+					</div>
+					<div class="col-12 col-md-6 d-flex align-items-center">
+						<div>
+							<h1>Doctor Dashboard</h1>
+						</div>
+					</div>
+				</div>
+
+
+				<br>
+				<h5 class="text lead">The following are services for doctors.</h5>
+				<% if (locals.user && user.fullname) { %>
+                <h6 class="mt-5">Logged In As: <%= user.fullname%>
+                </h6>
+                <% } %>
+                    <h3 class="mt-4">Services</h3>
+                    <div class="btn-group-vertical">
+                        <a href="/doctor/viewappointments" class="btn btn-primary m-2 text-start"><i class="fa fa-eye"
+                                aria-hidden="true"></i>
+                            View My Appointments</a>
+                    </div>
+        </div>
+    </main>
+
+    <%- include('../../partials/footer'); %>
+</body>
+
+</html>

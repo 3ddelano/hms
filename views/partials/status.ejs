@@ -1,0 +1,6 @@
+<td>
+	<% let color = "secondary";
+	if (status == "COMPLETED") color = "success";%>
+	<span class="badge bg-<%=color%>">
+		<%= status.split('_').join(' ') %> </span>
+</td>

@@ -1,27 +1,45 @@
 const LocalStrategy = require("passport-local").Strategy;
 const bcrypt = require("bcrypt");
 
-const { getPatientByID } = require("./database.js");
+const { getPatientByID, getDoctorByID } = require("./database.js");
 exports.initializePassport = async (passport) => {
 
-    const authenticateUser = async (email, password, done) => {
-        let patient = await getPatientByID(email);
+	const authenticatePatient = async (req, email, password, done) => {
+		let patient = await getPatientByID(email, true);
+		if (patient == null) return done(null, false, req.flash('message', { type: 'danger', title: 'Patient Not Found', text: 'Try creating an account.' }));
 
-        if (patient == null) return done(null, false, { message: "Email and password combination do not exist." });
+		try {
+			if (await bcrypt.compare(password, patient.password)) {
+				return done(null, patient);
+			} else return done(null, false, req.flash('message', { type: 'danger', title: 'Incorrect Credentials', text: 'Invalid password entered.' }))
+		} catch (err) {
+			return done(err);
+		}
+	};
 
-        try {
-            if (await bcrypt.compare(password, patient.password)) {
-                return done(null, patient);
-            } else return done(null, false, { message: "Email and password combination do not exist." })
-        } catch (err) {
-            return done(err);
-        }
-    };
+	const authenticateDoctor = async (req, email, password, done) => {
+		let doctor = await getDoctorByID(email, true);
+		if (doctor == null) return done(null, false, req.flash('message', { type: 'danger', title: 'Doctor Not Found', text: 'Contact hospital admin.' }));
 
-    passport.use(new LocalStrategy({ usernameField: "email" }, authenticateUser));
-    passport.serializeUser((user, done) => done(null, user.id));
-    passport.deserializeUser(async (id, done) => {
-        let gotUser = await getPatientByID(id);
-        return done(null, gotUser);
-    });
+		try {
+			if (await bcrypt.compare(password, doctor.password)) {
+				return done(null, doctor);
+			} else return done(null, false, req.flash('message', { type: 'danger', title: 'Incorrect Credentials', text: 'Invalid password entered.' }))
+		} catch (err) {
+			return done(err);
+		}
+	};
+
+	passport.use("patient", new LocalStrategy({ usernameField: "email", passReqToCallback: true }, authenticatePatient));
+	passport.use("doctor", new LocalStrategy({ usernameField: "email", passReqToCallback: true }, authenticateDoctor));
+
+	passport.serializeUser((user, done) => {
+		done(null, { id: user.id, role: user.role })
+	});
+	passport.deserializeUser(async (data, done) => {
+		let gotUser = null;
+		if (data.role == "patient") gotUser = await getPatientByID(data.id);
+		else if (data.role == "doctor") gotUser = await getDoctorByID(data.id);
+		return done(null, gotUser);
+	});
 }

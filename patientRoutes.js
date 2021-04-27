@@ -1,15 +1,15 @@
 const { ensureLoggedIn } = require('connect-ensure-login');
 const { getPatientByID, signupPatient, setPatientData,
-	makeAppointment, getAppointmentsByPatientID, getDoctorByID, getAllDoctors } = require("./database.js");
+	makeAppointment, getAppointmentsByPatientID, getDoctorByID, getAllDoctors, deleteAppointmentByPatient } = require("./database.js");
 
 module.exports = function (app, passport, renderTemplate) {
 	//get signup
-	app.get("/signup", checkNotAuthenticated, (req, res) => {
-		renderTemplate(req, res, "pages/signup", { message: null });
+	app.get("/signup", checkPatientNotAuthenticated, (req, res) => {
+		renderTemplate(req, res, "pages/patient/signup");
 	});
 
 	//post signup
-	app.post("/signup", checkNotAuthenticated, async (req, res) => {
+	app.post("/signup", checkPatientNotAuthenticated, async (req, res) => {
 		let { email, password, confirmpassword } = req.body;
 
 		let gotPatient = await getPatientByID(email);
@@ -22,7 +22,8 @@ module.exports = function (app, passport, renderTemplate) {
 
 		let returnError = (text) => {
 			message.text = text;
-			return renderTemplate(req, res, "pages/signup", { message });
+			req.flash("message", message);
+			return res.redirect("/signup");
 		};
 
 		if (gotPatient != null) {
@@ -37,13 +38,14 @@ module.exports = function (app, passport, renderTemplate) {
 			message.type = "success";
 			message.title = "Signup Successfull";
 			message.text = "Successfully signed up.";
-			return renderTemplate(req, res, "pages/login", { message });
+			req.flash("message", message);
+			return res.redirect("/login");
 		};
 	});
 
 	//get personal
 	app.get("/personal", ensureLoggedIn('/login'), checkPatientDataNotSet, (req, res) => {
-		renderTemplate(req, res, "pages/personal", { message: null });
+		renderTemplate(req, res, "pages/patient/personal");
 	});
 
 	app.post("/personal", ensureLoggedIn('/login'), checkPatientDataNotSet, async (req, res) => {
@@ -52,19 +54,21 @@ module.exports = function (app, passport, renderTemplate) {
 			await setPatientData(req.user.id, {
 				full_name: fullname, address, dob, gender, phone
 			});
-			return renderTemplate(req, res, "pages/index", { user: req.user, message: { type: "success", title: "Personal Data Updated", text: "Your personal data was successfully updated." } });
+			req.flash("message", { type: "success", title: "Personal Data Updated", text: "Your personal data was successfully updated." })
+			return res.redirect("/");
 		} catch (err) {
-			return renderTemplate(req, res, "pages/index", { user: req.user, message: { type: "danger", title: "Personal Data Not set", text: "Ensure all the fields are filled." } });
+			req.flash("message", { type: "danger", title: "Personal Data Not set", text: "Ensure all the fields are filled correctly." })
+			return res.redirect("/");
 		}
 	});
 
 	//get login
-	app.get("/login", checkNotAuthenticated, (req, res) => {
-		if (req.user) res.redirect('/');
-		else renderTemplate(req, res, "pages/login", { message: null });
+	app.get("/login", checkPatientNotAuthenticated, (req, res) => {
+		if (req.user && req.user.role == "patient") res.redirect('/');
+		else renderTemplate(req, res, "pages/patient/login");
 	});
 
-	app.post("/login", checkNotAuthenticated, passport.authenticate("local", {
+	app.post("/login", checkPatientNotAuthenticated, passport.authenticate("patient", {
 		successReturnToOrRedirect: '/',
 		failureRedirect: "/login",
 		failureFlash: true
@@ -72,32 +76,24 @@ module.exports = function (app, passport, renderTemplate) {
 
 	app.get("/logout", ensureLoggedIn('/login'), (req, res) => {
 		req.logOut();
-		if (req.user) renderTemplate(req, res, "pages/index", { message: { type: "success", title: "Logout Successfull", text: "You have been logged out successfully." } });
-		else res.redirect("/");
+		req.flash("message", { type: "success", title: "Logout Successfull", text: "You have been logged out successfully." });
+		return res.redirect("/");
 	})
 
-	async function checkUserDataSet(req, res, next) {
+	async function checkPatientDataSet(req, res, next) {
 		let user = req.user;
-		if (!user.full_name) return res.redirect('/personal');
+		if (req.user.role == "patient" && !user.full_name) return res.redirect('/personal');
 		return next();
 	}
 
 	async function checkPatientDataNotSet(req, res, next) {
 		let user = req.user;
-		if (user.full_name) return res.redirect("/");
+		if (req.user.role == "patient" && user.full_name) return res.redirect("/");
 		return next();
 	}
 
-	function checkAuthenticated(req, res, next) {
-		if (req.isAuthenticated()) {
-			return next();
-		}
-		req.session.returnTo = req.originalUrl;
-		return res.redirect("/login");
-	}
-
-	function checkNotAuthenticated(req, res, next) {
-		if (req.isAuthenticated()) {
+	function checkPatientNotAuthenticated(req, res, next) {
+		if (req.isAuthenticated() && req.user.role == "patient") {
 			return res.redirect("/");
 		}
 		return next();
@@ -107,16 +103,17 @@ module.exports = function (app, passport, renderTemplate) {
 
 
 	// SERVICES
-	app.get("/makeappointment", ensureLoggedIn("/login"), checkUserDataSet, async (req, res) => {
+	app.get("/makeappointment", ensureLoggedIn("/login"), checkPatientDataSet, async (req, res) => {
 		let doctors = await getAllDoctors();
-		return renderTemplate(req, res, "pages/makeappointment", { user: req.user, doctors });
+		return renderTemplate(req, res, "pages/patient/makeappointment", { user: req.user, doctors });
 	});
 
-	app.post("/makeappointment", ensureLoggedIn("/login"), checkUserDataSet, async (req, res) => {
+	app.post("/makeappointment", ensureLoggedIn("/login"), checkPatientDataSet, async (req, res) => {
 		let { reason, doctor, datetime } = req.body;
 
 		function returnError(title, text) {
-			return renderTemplate(req, res, "pages/index", { user: req.user, message: { type: "danger", title, text } });
+			req.flash('message', { type: "danger", title, text });
+			return res.redirect('/makeappointment');
 		}
 		if (!reason || reason.length < 5) return returnError("Making Appointment Failed", "Please enter a reason (more than 5 characters).");
 		if (reason.length > 2000) return returnError("Making Appointment Failed", "Please enter a reason (less than 2000 characters).");
@@ -136,10 +133,11 @@ module.exports = function (app, passport, renderTemplate) {
 			console.log('makeAppointment Error: ', err);
 			return returnError("Making Appointment Failed", "Please enter a valid date and time in the format [yyyy-mm-dd hh:mm +05:30] (Indian Standard Time)");
 		}
-		return renderTemplate(req, res, "pages/index", { user: req.user, message: { type: "success", title: "Appointment Made Successfully", text: "Your appointment has been sent to the admin successfully and is waiting approval." } });
+		req.flash("message", { type: "success", title: "Appointment Made Successfully", text: "Your appointment has been sent to the admin and is waiting approval." });
+		return res.redirect('/makeappointment');
 	});
 
-	app.get("/viewappointments", ensureLoggedIn("/login"), checkUserDataSet, async (req, res) => {
+	app.get("/viewappointments", ensureLoggedIn("/login"), checkPatientDataSet, async (req, res) => {
 		let appointments = await getAppointmentsByPatientID(req.user.id);
 
 		let doctorIDs = [];
@@ -150,12 +148,38 @@ module.exports = function (app, passport, renderTemplate) {
 
 		doctorIDs.forEach(id => doctors.push(getDoctorByID(id)));
 		doctors = await Promise.all(doctors);
-		return renderTemplate(req, res, "pages/viewappointments", { appointments, doctors });
+		return renderTemplate(req, res, "pages/patient/viewappointments", { appointments, doctors });
+	});
+
+	app.post("/cancelappointment", ensureLoggedIn("/login"), async (req, res) => {
+		let id = req.body.id;
+
+		function showError(title, text) {
+			req.flash("message", { type: "danger", title, text });
+			return res.redirect("/viewappointments");
+		}
+
+		if (!id) {
+			showError("Error", "Unable to cancel appointment.");
+			return;
+		}
+
+		try {
+			let response = await deleteAppointmentByPatient(id, req.user.id);
+			if (response) {
+				req.flash("message", { type: "success", title: "Appointment Cancelled", text: "Your appointment was cancelled successfully." });
+				return res.redirect("/viewappointments");
+			}
+			req.flash("message", { type: "danger", title: "Error", text: "An error occured when cancelling appointment." });
+			return res.redirect("/viewappointments");
+		} catch (err) {
+			console.log(err);
+		}
+		return res.redirect("/viewappointments");
 	});
 
 	app.get("/viewdoctors", ensureLoggedIn("/login"), async (req, res) => {
 		let doctors = await getAllDoctors();
-
-		return renderTemplate(req, res, "pages/viewdoctors", { doctors });
+		return renderTemplate(req, res, "pages/patient/viewdoctors", { doctors });
 	});
 }

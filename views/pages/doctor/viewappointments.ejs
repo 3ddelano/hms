@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<%- include('../../partials/head'); %>
+</head>
+
+<body class="container">
+
+	<header>
+		<%- include('../../partials/header', {hideSignup: true, doctor: true}); %>
+	</header>
+
+	<%- include('../../partials/alert');%>
+		<div class="modal fade" tabindex="-1" id="confirmcompleteappointment">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">Cancel Appointment</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						<p>Are you sure you want to mark the appointment as complete?</p>
+					</div>
+					<div class="modal-footer">
+						<a type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</a>
+						<a id="confirmcomplete" type="button" href="#" class="btn btn-primary"
+							onclick="confirmedComplete()">Yes</a>
+					</div>
+				</div>
+			</div>
+		</div>
+		<main>
+			<div class="col py-3 mb-5">
+				<h1 class="">My Appointments</h1>
+				<% if (locals.appointments && appointments.length> 0 ) { %>
+				<div class="table-responsive">
+				<table class="table table-bordered text-center">
+				<thead>
+					<tr class="table-dark">
+						<th scope="col">Date</th>
+						<th scope="col">Time</th>
+						<th scope="col">Status</th>
+						<th scope="col">Reason</th>
+						<th scope="col">Patient</th>
+						<th scope="col">Action</th>
+					</tr>
+				</thead>
+				<tbody>
+					<% 
+					appointments.forEach(appointment=> {
+						appointment.date = new Date(Date.parse(appointment.date));
+					});
+					appointments = appointments.sort((a,b)=> a.date - b.date);
+					appointments.forEach(appointment => {
+						let date = appointment.date.toLocaleDateString('en-IN', {timezone: 'Asia/Kolkata'});
+						let time = appointment.date.toLocaleTimeString('en-IN', {timeZone: 'Asia/Kolkata', hour: 'numeric', minute: 'numeric'});
+						let status = appointment.status;
+						let reason = appointment.reason;
+						let patient = patients.find(p=>p.id==appointment.patient_id);
+					%>
+						<tr>
+							<th scope="row"><%= date %></th>
+							<td><%= time %></td>
+							<%- include("../../partials/status", {status }); %>
+							<td><%= reason %></td>
+							<td><%= patient.full_name %></td>
+							<td>
+								<% if (status != "COMPLETED") { %>
+									<a type="button" onclick="completeAppointment(<%=appointment.id%>)"><i
+												class="fas fa-check text-success fa-lg"></i></a>
+								<% } %>
+							</td>
+						</tr>
+							
+					<%});%>
+				</tbody></table></div>
+			<% } else { %>
+				<p class="lead p-2">No appointments made.</p>
+			<% } %>
+		</div>
+	</main>
+
+	<%- include('../../partials/footer'); %>
+	<script>
+		function completeAppointment(id) {
+			let confirmModal = new bootstrap.Modal(document.getElementById('confirmcompleteappointment'));
+
+			let cofirmButton = document.getElementById("confirmcomplete");
+			cofirmButton.setAttribute("onclick", `confirmedComplete(${id})`);
+			confirmModal.show();
+		}
+
+		function confirmedComplete(id) {
+			const form = document.createElement('form');
+			form.method = "POST";
+			form.action = "/doctor/completeappointment";
+			const field = document.createElement('input');
+			field.name = "id";
+			field.value = id;
+			form.appendChild(field);
+			document.body.appendChild(form);
+			form.submit();
+		}
+	</script>
+	
+</body>
+
+</html>

@@ -12,18 +12,30 @@
 	</button>
 	<div class="collapse navbar-collapse" id="mainNav">
 		<ul class="navbar-nav w-100 d-flex justify-content-between">
-			<div>
+			<div class="d-md-flex">
 				<li class="nav-item">
 					<a class="nav-link" style="text-align: right;" href="/about">About</a>
 				</li>
+				<li class="nav-item">
+					<a class="nav-link" style="text-align: right;" href="/doctor">Doctor Dashboard</a>
+				</li>
 			</div>
 			<div class="d-md-flex">
-				<li class="nav-item justify-self-end">
-					<a class="nav-link text-end" href="/signup">Sign up</a>
-				</li>
-				<li class="nav-item justify-self-end">
-					<a class="nav-link text-end" href="/login">Login</a>
-				</li>
+				<% if (user) { %>
+					<li class="nav-item justify-self-end">
+						<a class="nav-link text-end" href="<%= (locals.doctor) ? '/doctor/logout' : '/logout'%>">Logout</a>
+					</li>
+				<% } else { %>
+					<% if (locals.hideSignup && hideSignup) {} else { %>
+						<li class="nav-item justify-self-end">
+							<a class="nav-link text-end" href="/signup">Sign up</a>
+						</li>
+					<% } %>
+					<li class="nav-item justify-self-end">
+						<a class="nav-link text-end" href="<%= (locals.doctor) ? '/doctor/login' : '/login'%>">Login</a>
+					</li>
+				<% } %>
+					
 			</div>
 		</ul>
 	</div>
@@ -39,8 +51,8 @@
             });
             let builtPath = "";
             for(let i = 0; i < pathArray.length; i++) {
-              builtPath += "/"+path.split("/").slice(1)[i]; %>
-          <li class="breadcrumb-item<% if((i+1) === pathArray.length) {%> active"><%= pathArray[i] %><% } else { %>"><a href="<%= builtPath %>"><%= pathArray[i] %></a><% } %></li>
-          <% } %>
+              builtPath += "/"+path.split("/").slice(1)[i];  %>
+          		<li class="breadcrumb-item<% if((i+1) === pathArray.length) {%> active"><%= pathArray[i] %><% } else { %>"><a href="<%= builtPath %>"><%= pathArray[i] %></a><% } %></li>
+          	<% } %>
         </ol>
 </nav>
