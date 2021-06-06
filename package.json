@@ -27,6 +27,7 @@
 		"express-flash": "^0.0.2",
 		"express-session": "^1.17.1",
 		"helmet": "^4.5.0",
+		"is-number": "^7.0.0",
 		"passport": "^0.4.1",
 		"passport-local": "^1.0.0",
 		"pg": "^8.6.0"
