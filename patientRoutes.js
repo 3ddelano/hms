@@ -1,6 +1,7 @@
 const { getPatientByID, signupPatient, setPatientData,
-	makeAppointment, getAppointmentsByPatientID, getDoctorByID, getAllDoctors, deleteAppointmentByPatient } = require("./database.js");
-
+	makeAppointment, getAppointmentsByPatientID, getDoctorByID, getAllDoctors, cancelAppointmentByPatient } = require("./database.js");
+const Filter = require('bad-words');
+const filter = new Filter();
 module.exports = function (app, passport, renderTemplate) {
 	//get signup
 	app.get("/signup", checkPatientNotAuthenticated, (req, res) => {
@@ -10,7 +11,6 @@ module.exports = function (app, passport, renderTemplate) {
 	//post signup
 	app.post("/signup", checkPatientNotAuthenticated, async (req, res) => {
 		let { email, password, confirmpassword } = req.body;
-
 		let gotPatient = await getPatientByID(email);
 
 		let message = {
@@ -24,6 +24,7 @@ module.exports = function (app, passport, renderTemplate) {
 			req.flash("message", message);
 			return res.redirect("/signup");
 		};
+		if (filter.isProfane(email)) return returnError("Email contains explicit content.");
 
 		if (gotPatient != null) {
 			return returnError("Email address already exists. Try to Login instead.");
@@ -57,6 +58,7 @@ module.exports = function (app, passport, renderTemplate) {
 
 	app.post("/personal", checkPatientAuthenticated, checkPatientDataNotSet, async (req, res) => {
 		let { fullname, address, dob, gender, phone } = req.body;
+
 		try {
 			await setPatientData(req.user.id, {
 				full_name: fullname, address, dob, gender, phone
@@ -172,7 +174,7 @@ module.exports = function (app, passport, renderTemplate) {
 		}
 
 		try {
-			let response = await deleteAppointmentByPatient(id, req.user.id);
+			let response = await cancelAppointmentByPatient(id, req.user.id);
 			if (response) {
 				req.flash("message", { type: "success", title: "Appointment Cancelled", text: "Your appointment was cancelled successfully." });
 				return res.redirect("/viewappointments");

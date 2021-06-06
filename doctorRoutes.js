@@ -22,7 +22,7 @@ module.exports = function (app, passport, renderTemplate) {
 		renderTemplate(req, res, "pages/doctor/index");
 	});
 
-	// Login//get login
+	// Get login
 	app.get("/doctor/login", checkDoctorNotAuthenticated, (req, res) => {
 		if (req.user && req.user.role == "doctor") res.redirect('/doctor');
 		else renderTemplate(req, res, "pages/doctor/login");

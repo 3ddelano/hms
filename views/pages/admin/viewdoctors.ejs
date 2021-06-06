@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<%- include('../../partials/head'); %>
+</head>
+
+<body class="container">
+
+	<header>
+		<%- include('../../partials/header', {hideSignup: true, admin: true}); %>
+	</header>
+	<%- include('../../partials/alert');%>
+		<div class="modal fade" tabindex="-1" id="confirmdeletedoctor">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">Confirm Changes</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						<p>Are you sure you want to delete the doctor?</p>
+					</div>
+					<div class="modal-footer">
+						<a type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</a>
+						<a id="confirmdelete" type="button" href="#" class="btn btn-primary"
+							onclick="confirmedDelete()">Yes</a>
+					</div>
+				</div>
+			</div>
+		</div>
+		<main>
+			<div class="col py-3 mb-5">
+				<h1 class="">Doctors Available</h1>
+				<% if (locals.doctors && doctors.length> 0 ) { %>
+				<div class="table-responsive">
+				<table class="table table-bordered text-center">
+				<thead>
+					<tr class="table-dark">
+						<th scope="col">Email</th>
+						<th scope="col">Name</th>
+						<th scope="col">Phone</th>
+						<th scope="col">Specialization</th>
+						<th scope="col">Gender</th>
+						<th scope="col">Date of Birth</th>
+						<th scope="col">MBBS Reg Num</th>
+						<th scope="col">Year of Passing MBBS</th>
+						<th scope="col">Action</th>
+					</tr>
+				</thead>
+				<tbody>
+				<% doctors.forEach(doctor => {%>
+						<tr>
+							<th scope="row"><%= doctor.id %></th>
+							<td><%= doctor.full_name %></td>
+							<td><%= doctor.phone %></td>
+
+							<td><%= doctor.specialization %></td>
+							<td><%= doctor.gender=="M" ? "Male" : ((doctor.gender=="F" ) ? "Female" :"Other") %></td>
+							<% let doctor_date = "-"
+							if (doctor.dob) {
+								let stamp = String(doctor.dob).substring(0, String(doctor.dob).length-1)
+								let date_obj = new Date(stamp);
+								let date = ("0" + date_obj.getDate()).slice(-2);
+								let month = ("0" + (date_obj.getMonth() + 1)).slice(-2);
+								let year = date_obj.getFullYear();
+								doctor_date = year + "-" + month + "-" + date
+							}%>
+							<td><%= doctor_date %></td>
+							<td><%= doctor.mbbs_reg %></td>
+							<td><%= doctor.year_of_passing %></td>
+							<td>
+								<a type="button" onclick="deleteDoctor('<%=doctor.id%>')"><i class="fas fa-times text-danger fa-lg"></i></a>
+							</td>
+						</tr>
+						
+					<%});
+				%>
+				</tbody>
+				</table></div>
+			<% } else { %>
+				<p> No doctors available.</p>
+			<% } %>
+		</div>
+	</main>
+	<%- include('../../partials/footer'); %>
+	<script>
+		function deleteDoctor(id) {
+			let confirmModal = new bootstrap.Modal(document.getElementById('confirmdeletedoctor'));
+
+			let cofirmButton = document.getElementById("confirmdelete");
+			cofirmButton.setAttribute("onclick", `confirmedDelete('${id}')`);
+			confirmModal.show();
+		}
+
+		function confirmedDelete(id) {
+			const form = document.createElement('form');
+			form.method = "POST";
+			form.action = "/admin/deletedoctor";
+			const field = document.createElement('input');
+			field.name = "id";
+			field.value = id;
+			form.appendChild(field);
+			document.body.appendChild(form);
+			form.submit();
+		}
+	</script>
+</body>
+
+</html>

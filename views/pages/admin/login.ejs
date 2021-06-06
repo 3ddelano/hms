@@ -8,17 +8,17 @@
 <body class="container">
 
 	<header>
-		<%- include('../../partials/header'); %>
+		<%- include('../../partials/header', {hideSignup: true, admin: true}); %>
 	</header>
 	<%- include('../../partials/alert'); %>
 
 		<main>
 			<div class="col py-3 mb-5">
-				<h1 class="text-center">Patient Login</h1>
-				<p class="col lh-sm"><b>Public Test Login</b><br>Email: patient@gmail.com<br>Password:
+				<h1 class="text-center">Admin Login</h1>
+				<p class="col lh-sm"><b>Public Test Login</b><br>Email: admin@cityhospital.com<br>Password:
 					12345
 				</p>
-				<form action="/login" method="POST" id="login-form" class="row g-3 needs-validation">
+				<form action="/admin/login" method="POST" id="login-form" class="row g-3 needs-validation">
 					<div class="mb-3">
 						<label for="loginemail" class="form-label">Email address</label>
 						<input required name="email" type="email" class="form-control" id="login-email"
@@ -31,10 +31,6 @@
 					</div>
 					<button type="submit" class="btn btn-primary">Submit</button>
 				</form>
-				<div class="text-center mt-3">
-					<a class="" href="/signup">I don't have an account. Create Account <i
-							class="fas fa-arrow-circle-right"></i></a>
-				</div>
 			</div>
 		</main>
 

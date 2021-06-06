@@ -20,16 +20,38 @@
 					<li class="nav-item">
 						<a class="nav-link" style="text-align: right;" href="/">Patient Dashboard</a>
 					</li>
+					<li class="nav-item">
+						<a class="nav-link" style="text-align: right;" href="/admin">Admin Dashboard</a>
+					</li>
+				<% } else if (locals.admin) { %>
+					<li class="nav-item">
+						<a class="nav-link" style="text-align: right;" href="/">Patient Dashboard</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" style="text-align: right;" href="/doctor">Doctor Dashboard</a>
+					</li>
 				<% } else { %>
 					<li class="nav-item">
 						<a class="nav-link" style="text-align: right;" href="/doctor">Doctor Dashboard</a>
 					</li>
+					<li class="nav-item">
+						<a class="nav-link" style="text-align: right;" href="/admin">Admin Dashboard</a>
+					</li>
 				<% } %>
 			</div>
+			<%  let logoutURL = "/logout";
+				let loginURL = "/login";
+				if (locals.admin) loginURL = "/admin/login"
+				else if (locals.doctor) loginURL = "/doctor/login"
+
+				if (locals.user && user.role == 'admin') logoutURL = "/admin/logout"
+				else if (locals.user && user.role == 'doctor') logoutURL = "/doctor/logout";
+
+				%>
 			<div class="d-md-flex">
 				<% if (user) { %>
 					<li class="nav-item justify-self-end">
-						<a class="nav-link text-end" href="<%= (locals.doctor || user.role == 'doctor') ? '/doctor/logout' : '/logout'%>">Logout</a>
+						<a class="nav-link text-end" href="<%= logoutURL %>">Logout</a>
 					</li>
 				<% } else { %>
 					<% if (locals.hideSignup && hideSignup) {} else { %>
@@ -38,7 +60,7 @@
 						</li>
 					<% } %>
 					<li class="nav-item justify-self-end">
-						<a class="nav-link text-end" href="<%= (locals.doctor) ? '/doctor/login' : '/login'%>">Login</a>
+						<a class="nav-link text-end" href="<%= loginURL %>">Login</a>
 					</li>
 				<% } %>
 					

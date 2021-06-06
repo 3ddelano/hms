@@ -1,6 +1,8 @@
 <td>
 	<% let color = "secondary";
-	if (status == "COMPLETED") color = "success";%>
+	if (status == "COMPLETED") color = "success";
+	else if (status == "CANCELLED") color = "danger";
+	else if (status == "APPROVED") color = "primary";%>
 	<span class="badge bg-<%=color%>">
 		<%= status.split('_').join(' ') %> </span>
 </td>

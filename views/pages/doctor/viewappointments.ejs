@@ -16,7 +16,7 @@
 			<div class="modal-dialog">
 				<div class="modal-content">
 					<div class="modal-header">
-						<h5 class="modal-title">Cancel Appointment</h5>
+						<h5 class="modal-title">Confirm Changes</h5>
 						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 					</div>
 					<div class="modal-body">
@@ -32,7 +32,7 @@
 		</div>
 		<main>
 			<div class="col py-3 mb-5">
-				<h1 class="">My Appointments</h1>
+				<h1 class="">Appointments For You</h1>
 				<% if (locals.appointments && appointments.length> 0 ) { %>
 				<div class="table-responsive">
 				<table class="table table-bordered text-center">
@@ -66,10 +66,10 @@
 							<td><%= reason %></td>
 							<td><%= patient.full_name %></td>
 							<td>
-								<% if (status != "COMPLETED") { %>
+								<% if (status == "APPROVED") { %>
 									<a type="button" onclick="completeAppointment(<%=appointment.id%>)"><i
 												class="fas fa-check text-success fa-lg"></i></a>
-								<% } %>
+								<% } else {%>-<%} %>
 							</td>
 						</tr>
 							

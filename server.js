@@ -25,6 +25,7 @@ const { init, getHospitalByName } = require("./database.js");
 // other routes
 let patientRoutes = require("./patientRoutes");
 let doctorRoutes = require("./doctorRoutes");
+let adminRoutes = require("./adminRoutes");
 
 app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true }));
@@ -34,6 +35,8 @@ app.use(flash());
 app.use(helmet({
 	contentSecurityPolicy: false
 }));
+
+app.use("/favicons", express.static('favicons'));
 
 let hospital = { name: "City Hospital", address: "India", phone: "0832 - 2123456" };
 
@@ -82,6 +85,7 @@ app.get("/", (req, res) => {
 
 patientRoutes(app, passport, renderTemplate);
 doctorRoutes(app, passport, renderTemplate);
+adminRoutes(app, passport, renderTemplate);
 
 // handle 404
 app.get("/404", (req, res) => {

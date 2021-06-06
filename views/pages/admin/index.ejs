@@ -8,7 +8,7 @@
 <body class="container">
 
 	<header>
-		<%- include('../../partials/header', {hideSignup: true, doctor: true}); %>
+		<%- include('../../partials/header', {hideSignup: true, admin: true}); %>
 	</header>
 	<%- include('../../partials/alert');%>
 
@@ -22,23 +22,27 @@
 					</div>
 					<div class="col-12 col-md-6 d-flex align-items-center">
 						<div>
-							<h1>Doctor Dashboard</h1>
+							<h1>Admin Dashboard</h1>
 						</div>
 					</div>
 				</div>
 
 
 				<br>
-				<h5 class="text lead">The following are services for doctors.</h5>
+				<h5 class="text lead">The following are services for admins.</h5>
 				<% if (locals.user && user.fullname) { %>
-                <h6 class="mt-5">Logged In As: <%= user.fullname%>
-                </h6>
+					<h6 class="mt-5">Logged In As: <%= user.fullname%>
+					</h6>
                 <% } %>
                     <h3 class="mt-4">Services</h3>
                     <div class="btn-group-vertical">
-                        <a href="/doctor/viewappointments" class="btn btn-primary m-2 text-start"><i class="fa fa-eye"
-                                aria-hidden="true"></i>
-                            View Appointments</a>
+                        <a href="/admin/adddoctor" class="btn btn-primary m-2 text-start"><i class="fa fa-plus" aria-hidden="true"></i>
+                            Add Doctor</a>
+						<a href="/admin/viewdoctors" class="btn btn-primary m-2 text-start"><i class="fa fa-eye" aria-hidden="true"></i>
+							View Doctors</a>
+						<a href="/admin/viewappointments" class="btn btn-primary m-2 text-start"><i class="fa fa-eye" aria-hidden="true"></i>
+							View Appointments</a>
+						
                     </div>
         </div>
     </main>
