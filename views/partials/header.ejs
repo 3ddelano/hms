@@ -1,22 +1,22 @@
-<div class="container bg-warning py-1">
+<!-- <div class="container bg-warning py-1">
 	<a norefferer noopener target="_blank" class="text text-dark p-2"
 		href="https://github.com/3ddelano/hms/issues">[WIP] To report a bug / suggestion Click Here <i
 			class="fa fa-external-link-alt" aria-hidden="true"></i></a>
-</div>
+</div> -->
 <nav class="navbar navbar-expand-md navbar-light bg-light p-2">
-	<a class="navbar-brand" href="/"><i class="fa fa-hospital-o" aria-hidden="true"></i> Hospital Management
-		System</a>
-	<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"
-		aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-		<span class="navbar-toggler-icon"></span>
-	</button>
-	<div class="collapse navbar-collapse" id="mainNav">
-		<ul class="navbar-nav w-100 d-flex justify-content-between">
-			<div class="d-md-flex">
-				<li class="nav-item">
-					<a class="nav-link" style="text-align: right;" href="/about">About</a>
-				</li>
-				<% if (locals.doctor) { %>
+    <a class="navbar-brand" href="/"><i class="fa fa-hospital-o" aria-hidden="true"></i> Hospital Management
+        System</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="mainNav">
+        <ul class="navbar-nav w-100 d-flex justify-content-between">
+            <div class="d-md-flex">
+                <li class="nav-item">
+                    <a class="nav-link" style="text-align: right;" href="/about">About</a>
+                </li>
+                <% if (locals.doctor) { %>
 					<li class="nav-item">
 						<a class="nav-link" style="text-align: right;" href="/">Patient Dashboard</a>
 					</li>

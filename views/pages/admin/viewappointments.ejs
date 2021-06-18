@@ -2,56 +2,56 @@
 <html lang="en">
 
 <head>
-	<%- include('../../partials/head'); %>
+    <%- include('../../partials/head'); %>
 </head>
 
 <body class="container">
 
-	<header>
-		<%- include('../../partials/header', {hideSignup: true, admin: true}); %>
-	</header>
+    <header>
+        <%- include('../../partials/header', {hideSignup: true, admin: true}); %>
+    </header>
 
-	<%- include('../../partials/alert');%>
-		<div class="modal fade" tabindex="-1" id="confirmapproveappointment">
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h5 class="modal-title">Confirm Changes</h5>
-						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-					</div>
-					<div class="modal-body">
-						<p>Are you sure you want to mark the appointment as approved?</p>
-					</div>
-					<div class="modal-footer">
-						<a type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</a>
-						<a id="confirmapprove" type="button" href="#" class="btn btn-primary"
-							onclick="confirmedApprove()">Yes</a>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="modal fade" tabindex="-1" id="confirmcancelappointment">
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h5 class="modal-title">Confirm Changes</h5>
-						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-					</div>
-					<div class="modal-body">
-						<p>Are you sure you want to cancel the appointment?</p>
-					</div>
-					<div class="modal-footer">
-						<a type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</a>
-						<a id="confirmcancel" type="button" href="#" class="btn btn-primary"
-							onclick="confirmedCancel()">Yes</a>
-					</div>
-				</div>
-			</div>
-		</div>
-		<main>
-			<div class="col py-3 mb-5">
-				<h1 class="">Upcoming Appointments</h1>
-				<% if (locals.appointments && appointments.length> 0 ) { %>
+    <%- include('../../partials/alert');%>
+        <div class="modal fade" tabindex="-1" id="confirmapproveappointment">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Confirm Changes</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Are you sure you want to mark the appointment as approved?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <a type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</a>
+                        <a id="confirmapprove" type="button" href="#" class="btn btn-primary"
+                            onclick="confirmedApprove()">Yes</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" tabindex="-1" id="confirmcancelappointment">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Confirm Changes</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Are you sure you want to cancel the appointment?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <a type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</a>
+                        <a id="confirmcancel" type="button" href="#" class="btn btn-primary"
+                            onclick="confirmedCancel()">Yes</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <main>
+            <div class="col py-3 mb-5">
+                <h1 class="">Upcoming Appointments</h1>
+                <% if (locals.appointments && appointments.length> 0 ) { %>
 				<div class="table-responsive">
 				<table class="table table-bordered text-center">
 				<thead>
@@ -61,6 +61,7 @@
 						<th scope="col">Status</th>
 						<th scope="col">Reason</th>
 						<th scope="col">Patient</th>
+                        <th scope="col">Doctor</th>
 						<th scope="col">Action</th>
 					</tr>
 				</thead>
@@ -76,6 +77,8 @@
 						let status = appointment.status;
 						let reason = appointment.reason;
 						let patient = patients.find(p=>p.id==appointment.patient_id);
+                        let doctor = doctors.find(d=>d.id==appointment.doctor_id);
+                        console.log(doctor);
 					%>
 						<tr>
 							<th scope="row"><%= date %></th>
@@ -83,6 +86,7 @@
 							<%- include("../../partials/status", {status }); %>
 							<td><%= reason %></td>
 							<td><%= patient.full_name %></td>
+                            <td><%= doctor.full_name %></td>
 							<td class="d-inline-flex">
 								<% if (status == "APPROVED") { %>
 									<a type="button" onclick="cancelAppointment(<%=appointment.id%>)"><i 
@@ -106,46 +110,46 @@
 
 	<%- include('../../partials/footer'); %>
 	<script>
-		function approveAppointment(id) {
-			let confirmModal = new bootstrap.Modal(document.getElementById('confirmapproveappointment'));
+        function approveAppointment(id) {
+            let confirmModal = new bootstrap.Modal(document.getElementById('confirmapproveappointment'));
 
-			let cofirmButton = document.getElementById("confirmapprove");
-			cofirmButton.setAttribute("onclick", `confirmedApprove(${id})`);
-			confirmModal.show();
-		}
+            let cofirmButton = document.getElementById("confirmapprove");
+            cofirmButton.setAttribute("onclick", `confirmedApprove(${id})`);
+            confirmModal.show();
+        }
 
-		function confirmedApprove(id) {
-			const form = document.createElement('form');
-			form.method = "POST";
-			form.action = "/admin/approveappointment";
-			const field = document.createElement('input');
-			field.name = "id";
-			field.value = id;
-			form.appendChild(field);
-			document.body.appendChild(form);
-			form.submit();
-		}
+        function confirmedApprove(id) {
+            const form = document.createElement('form');
+            form.method = "POST";
+            form.action = "/admin/approveappointment";
+            const field = document.createElement('input');
+            field.name = "id";
+            field.value = id;
+            form.appendChild(field);
+            document.body.appendChild(form);
+            form.submit();
+        }
 
-		function cancelAppointment(id) {
-			let confirmModal = new bootstrap.Modal(document.getElementById('confirmcancelappointment'));
+        function cancelAppointment(id) {
+            let confirmModal = new bootstrap.Modal(document.getElementById('confirmcancelappointment'));
 
-			let cofirmButton = document.getElementById("confirmcancel");
-			cofirmButton.setAttribute("onclick", `confirmedCancel(${id})`);
-			confirmModal.show();
-		}
+            let cofirmButton = document.getElementById("confirmcancel");
+            cofirmButton.setAttribute("onclick", `confirmedCancel(${id})`);
+            confirmModal.show();
+        }
 
-		function confirmedCancel(id) {
-			const form = document.createElement('form');
-			form.method = "POST";
-			form.action = "/admin/cancelappointment";
-			const field = document.createElement('input');
-			field.name = "id";
-			field.value = id;
-			form.appendChild(field);
-			document.body.appendChild(form);
-			form.submit();
-		}
-	</script>
+        function confirmedCancel(id) {
+            const form = document.createElement('form');
+            form.method = "POST";
+            form.action = "/admin/cancelappointment";
+            const field = document.createElement('input');
+            field.name = "id";
+            field.value = id;
+            form.appendChild(field);
+            document.body.appendChild(form);
+            form.submit();
+        }
+    </script>
 	
 </body>
 
