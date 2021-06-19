@@ -4,10 +4,7 @@ This is a web portal for patients to sign up and login, make appointments, view 
 <a href="https://hms-product.herokuapp.com" target="_blank" norefferer noopener><h1>Goto Site</h1></a>
 
 # Team members
-* <a href="https://delano-lourenco.web.app/" target="_blank" norefferer noopener>DELANO LOURENCO</a>
-<br>
-<a href="https://www.linkedin.com/in/delano-lourenco-a9022a190" rel="nofollow noreferrer" target="_blank">
-    <img src="https://img.shields.io/badge/-delanolourenco-blue?style=flat-square&logo=Linkedin&logoColor=white&link=https://www.linkedin.com/in/delano-lourenco-a9022a190/" alt="linkedin"></a> 
+* <a href="https://delano-lourenco.web.app/" target="_blank" norefferer noopener>DELANO LOURENCO</a><br><a href="https://www.linkedin.com/in/delano-lourenco-a9022a190" rel="nofollow noreferrer" target="_blank"><img src="https://img.shields.io/badge/-delanolourenco-blue?style=flat-square&logo=Linkedin&logoColor=white&link=https://www.linkedin.com/in/delano-lourenco-a9022a190/" alt="linkedin"></a> 
 * M V H SAI SRIRAJ
 * NARAYAN SUBRAMANIAN
 * RANJEESH KAIPPADA
